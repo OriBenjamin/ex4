@@ -46,6 +46,14 @@ public:
     *          int - number of rounds played
     */
     int getNumberOfRounds() const;
+
+private:
+    std::queue<Card> m_cards;
+    std::queue<Player> m_players;
+    std::vector<Player> m_winners;
+    std::vector<Player> m_losers;
+    int m_teamSize;
+    int m_roundCount;
 };
 
 
