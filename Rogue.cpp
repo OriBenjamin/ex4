@@ -1,11 +1,19 @@
-#include "Player.h"
-#include "Rouge.h"
-#include <iostream>
+#include "Rogue.h"
 
-void Rogue::addCoins(int coinsAmount)
+using std::string;
+
+Rogue::Rogue(const string name):
+Player(name, "Rogue")
+{}
+
+void Rogue::addCoins(const int coinsAmount)
 {
-    if(coinsAmount>0)
+    if(coinsAmount <= 0)
     {
-        this->m_coins += 2*coinsAmount; 
-    }  
+        throw InvalidArgument();
+    }
+    else
+    {
+        this->m_playerCoins += 2*coinsAmount; 
+    }
 }

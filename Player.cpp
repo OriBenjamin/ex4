@@ -1,80 +1,85 @@
-//
-// Created by Ori Dekel and Liel Ferber 02/05/2022
-//
-
 #include "Player.h"
 #include "utilities.h"
 #include <iostream>
-using std::cout;
-using std::endl;
+
 using std::string;
+
+const int DEFAULT_LEVEL = 1;
+const int DEFAULT_COINS = 10;
+const int DEFAULT_MAX_HP = 100;
+const int DEFAULT_FORCE = 5;
+const int DEFAULT_MAX_HEALTH = 100;
+
+
 
 /*Player constructor- update Players fields according to the given parameters
 or defaults values*/
-Player::Player(const char* name, int maxHP, int force):
-m_name(string(name)),
-m_level(1),
-m_coins(0),
-m_maxHP(maxHP),
-m_hp(maxHP),
-m_force(force)
+Player::Player(const string name, const string job):
+m_playerName(name),
+m_playerJob(job),
+m_playerHp(DEFAULT_MAX_HEALTH),
+m_playerLevel(DEFAULT_LEVEL),
+m_playerCoins(DEFAULT_COINS),
+m_playerForce(DEFAULT_FORCE)
 {
-    //some of the given parameters are not valid
-    if(this->m_maxHP<0)
+    if(!playerNameIsValid(playerName))
     {
-        this->m_maxHP = DEFAULT_MAX_HP;
-        this->m_hp = m_maxHP;
+        throw InvalidPlayerName();
     }
-    if(this->m_force<0)
+    if(playerClassIsValid(job))
     {
-        this->m_force = DEFAULT_FORCE;
+        throw InvalidPlayerClass();
     }
 }
 
-//prints player info
-void Player::printInfo()
+Player::~Player()
 {
-    printPlayerInfo(this->m_name.c_str(),this->m_level,this->m_force,this->m_hp,this->m_coins);
+    delete[] this->m_playerName;
+    delete[] this->m_playerJob;
 }
 
-//increasing players level
+
+//increasing player level
 void Player::levelUp()
 {
-    if(this->m_level < 10)
+    if(this->m_playerLevel < 10)
     {
-        this->m_level++;
+        this->m_playerLevel++;
+    }
+    else
+    {
+        throw PlayerHasAlreadyWon();
     }
 }
 
-//getting players level
-int Player::getLevel()
-{
-    return this->m_level;   
-}
 
 //increasing players force
-void Player::buff(int buffAmount)
+void Player::buff(const int buffAmount)
 {
-    if(buffAmount>0)
+    this->m_playerForce += buffAmount;
+    if(this->m_playerForce < 0)
     {
-        this->m_force += buffAmount;   
+        this->m_playerForce = 0;
     }
 }
 
+
 //increasing players heal points
-void Player::heal(int healAmount) 
+void Player::heal(const int healAmount) 
 {
-    if(healAmount>0)
+    if(healAmount <= 0)
     {
-        this->m_hp += healAmount;   
-        if(this->m_hp > this->m_maxHP)
-        {
-            this->m_hp = this->m_maxHP;
-        }
+        throw InvalidArgument();
+        
+    }
+    else
+    {
+        this->m_playerHp += healAmount;
     }
 }
 
 //decreasing players heal points
+<<<<<<< HEAD
 void Player::damage(int damageAmount)
 {
     if(damageAmount>0)
@@ -83,10 +88,28 @@ void Player::damage(int damageAmount)
         if(this->m_hp < 0)
         {
             this->m_hp = 0;
+=======
+void Player::damage(const int damageAmount)
+{
+    if(damageAmount <= 0)
+    {
+        throw InvalidArgument();
+    }
+    else
+    {
+        try
+        {
+            this->m_playerHp -= damageAmount;
+        }
+        catch(PlayerHasAlreadyDied& exception)
+        {
+            throw PlayerHasAlreadyDied();
+>>>>>>> 8013927bd1cbaa8edb22e4bf745931fa0ef9ac84
         }
     }
 }
 
+<<<<<<< HEAD
 //checks if the player died
 bool Player::isKnockedOut()
 {
@@ -115,10 +138,84 @@ bool Player::pay(int payAmount)
     }
     this->m_coins -= payAmount;
     return true;
+=======
+
+//checks if the player died
+bool Player::isKnockedOut()
+{
+    return this->m_playerHp == 0;
+}
+
+
+//increasing players coins
+void Player::addCoins(const int coinsAmount) 
+{
+    if(coinsAmount <= 0)
+    {
+        throw InvalidArgument();
+    }
+    else
+    {
+        this->m_playerCoins += coinsAmount; 
+    }
+}
+
+
+//decreasing players coins depending the payment he made
+void Player::pay(const int payAmount)
+{
+    if(payAmount <= 0 )
+    {
+        throw InvalidArgument();
+    }
+    if(this->m_playerCoins < payAmount)
+    {
+        throw PlayerHasNotEnughCoins();
+    }  
+    else
+    {
+        this->m_playerCoins -= payAmount;
+    }
+>>>>>>> 8013927bd1cbaa8edb22e4bf745931fa0ef9ac84
 }
 
 //checks players attack strength
 int Player::getAttackStrength()
 {
+<<<<<<< HEAD
     return this->m_force + this->m_level;
 }
+=======
+    return this->m_playerForce + this->m_playerLevel;
+}
+
+
+bool playerNameIsValid(const string name);
+{
+    int nameLength = 0;
+    while(name != nullptr)
+    {
+        nameLength++;
+        //check the character's validity according to thier assci values
+        if(nameLength > 15 || int(*name) < 65  || (int(*name) > 90 && int(*name) < 97) || int(*name) > 122 || int(*name) == 32)
+        {
+            return false;
+        }
+        name++;
+    }
+    return true;
+}
+
+bool playerClassIsValid(const string name, const string playerJobTypes[], const int currentAmountOfPlayerTypes)
+{
+    for(int i = 0; i < Current_Amount_Of_Player_Types, i++)
+    {
+        if(!name.compare(playerJobTypes[i]))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+>>>>>>> 8013927bd1cbaa8edb22e4bf745931fa0ef9ac84
