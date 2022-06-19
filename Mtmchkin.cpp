@@ -20,6 +20,8 @@ m_roundCount(0),
     int lineNumber = 1;
     while(std::getline(cardsFile,cardName))
     {
+        try
+        {
         switch(cardName)
         {
             case Goblin:
@@ -43,8 +45,11 @@ m_roundCount(0),
             case Vampire:
                 m_cards.push(&Vampire(cardName));
                 break;
-            default:
-                throw DeckFileFormatError(lineNumber);
+        }
+        }
+        catch(InvalidCardName& exception)
+        {
+            throw DeckFileFormatError(lineNumber);
         }
         lineNumber++;
     }
