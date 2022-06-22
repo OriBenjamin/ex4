@@ -1,7 +1,9 @@
 COMPILER = g++
 PLAYERS_DIR = Players/
 CARDS_DIR = Cards/
-OBJS = Player.o utilities.o HealthPoints.o Fighter.o Rogue.o Wizard.o Card.o Barfight.o BattleCards.o Dragon.o Goblin.o Vampire.o Fairy.o Merchant.o Pitfall.o Treasure.o
+OBJS = Player.o utilities.o HealthPoints.o Fighter.o Rogue.o Wizard.o Card.o Barfight.o BattleCards.o Dragon.o Goblin.o Vampire.o Fairy.o Merchant.o Pitfall.o Treasure.o Mtmchkin.o test.o
+ALL_CARDS_H = $(CARDS_DIR)Card.h $(CARDS_DIR)Barfight.h $(CARDS_DIR)BattleCards.h $(CARDS_DIR)Dragon.h $(CARDS_DIR)Goblin.h $(CARDS_DIR)Vampire.h $(CARDS_DIR)Fairy.h $(CARDS_DIR)Merchant.h $(CARDS_DIR)Pitfall.h $(CARDS_DIR)Treasure.h
+ALL_PLAYERS_H = $(PLAYERS_DIR)Player.h $(PLAYERS_DIR)HealthPoints.h $(PLAYERS_DIR)Fighter.h $(PLAYERS_DIR)Rogue.h $(PLAYERS_DIR)Wizard.h
 EXEC = Test
 DEBUG_FLAG = -g
 COMP_FLAG = -std=c++11 -Wall -Werror
@@ -9,8 +11,11 @@ COMP_FLAG = -std=c++11 -Wall -Werror
 $(EXEC) : $(OBJS)
 	$(COMPILER) $(DEBUG_FLAG) $(OBJS) -o $@
 
-BattleCards.o: Exception.h utilities.h $(CARDS_DIR)Card.h $(PLAYERS_DIR)Player.h $(CARDS_DIR)BattleCards.h $(CARDS_DIR)BattleCards.cpp
-	$(COMPILER) -c $(DEBUG_FLAG) $(COMP_FLAG) $(CARDS_DIR)BattleCards.cpp
+test.o: Exception.h utilities.h $(ALL_CARDS_H) $(ALL_PLAYERS_H) Mtmchkin.h test.cpp
+	$(COMPILER) -c $(DEBUG_FLAG) $(COMP_FLAG) test.cpp
+
+Mtmchkin.o: Exception.h utilities.h $(ALL_CARDS_H) $(ALL_PLAYERS_H) Mtmchkin.h Mtmchkin.cpp
+	$(COMPILER) -c $(DEBUG_FLAG) $(COMP_FLAG) Mtmchkin.cpp
 
 Dragon.o: Exception.h utilities.h $(CARDS_DIR)Card.h $(PLAYERS_DIR)Player.h $(CARDS_DIR)BattleCards.h $(CARDS_DIR)Dragon.h $(CARDS_DIR)Dragon.cpp
 	$(COMPILER) -c $(DEBUG_FLAG) $(COMP_FLAG) $(CARDS_DIR)Dragon.cpp

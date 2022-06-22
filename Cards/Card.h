@@ -5,7 +5,9 @@
 #include "../Exception.h"
 #include "../Players/Player.h"
 #include "../utilities.h"
-const int CURRENT_AMOUNT_OF_CARD_TYPES = 8;
+
+const std::string cardTypes[9] = {"Goblin", "Vampire", "Dragon", "Merchant", "Treasure", "Pitfall", "Barfight", "Fairy", "Gang"};
+const int CURRENT_AMOUNT_OF_CARD_TYPES = 9;
 
 class Card
 {
@@ -14,15 +16,16 @@ class Card
     
     Card(const std::string name);
     Card(const Card& card) = delete;
-    ~Card() = default;
+    virtual ~Card() = default;
     Card& operator=(const Card& card) = delete;
-    virtual void cardEffect() = 0;
+    friend std::ostream& operator<<(std::ostream& os, const Card& card);
+    virtual void printCardData(std::ostream& os) const;
+    virtual void cardEffect(Player& player) = 0;
 
     protected:
     std::string m_cardName;
 };
 
-const std::string cardTypes[8] = {"Goblin", "Vampire", "Dragon", "Merchant", "Treasure", "Pitfall", "Barfight", "Fairy"};
 bool cardNameIsValid(const std::string name, const std::string cardTypes[] = cardTypes, const int currentAmountOfCardTypes = CURRENT_AMOUNT_OF_CARD_TYPES);
 
 

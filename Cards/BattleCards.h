@@ -15,12 +15,12 @@ class BattleCard : public Card
     BattleCard(const BattleCard& battleCard) = delete;
     virtual ~BattleCard() = default;
     BattleCard& operator=(const BattleCard& battleCard) = delete;
-    friend std::ostream& operator<<(std::ostream& os, const BattleCard& battleCard);
-    virtual void cardEffect() = 0;
+    void printCardData(std::ostream& os) const override;
+    virtual void cardEffect(Player& player) = 0;
+    friend class Gang;
 
     protected:
 
-    std::string m_cardName;
     const int m_cardLoot;
     const int m_cardForce;
     const int m_cardDamage;

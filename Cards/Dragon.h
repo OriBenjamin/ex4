@@ -13,7 +13,6 @@ class Dragon : public BattleCard
     Dragon(const Dragon& dragon) = delete;
     ~Dragon() = default;
     Dragon& operator=(const Dragon& dragon) = delete;
-    //friend std::ostream& operator<<(std::ostream& os, const BattleCard& battleCard) override;
     void cardEffect(Player& player);
 
     

@@ -11,18 +11,19 @@ m_cardForce(cardForce),
 m_cardDamage(cardDamage)
 {}
 
-ostream& operator<<(ostream& os, const BattleCard& battleCard)
+void BattleCard::printCardData(std::ostream& os) const
 {
-    printCardDetails(os, battleCard.m_cardName);
-    if(battleCard.m_cardName.compare("Dragon")==0)
+    printCardDetails(os, this->m_cardName);
+    if(this->m_cardName == "Goblin" || this->m_cardName == "Vampire" || this->m_cardName == "Dragon")
     {
-        printMonsterDetails(os, battleCard.m_cardForce, battleCard.m_cardDamage, battleCard.m_cardLoot, true);
+        if(this->m_cardName.compare("Dragon")==0)
+        {
+            printMonsterDetails(os, this->m_cardForce, this->m_cardDamage, this->m_cardLoot, true);
+        }
+        else
+        {
+            printMonsterDetails(os, this->m_cardForce, this->m_cardDamage, this->m_cardLoot, false);
+        }
     }
-    else
-    {
-        printMonsterDetails(os, battleCard.m_cardForce, battleCard.m_cardDamage, battleCard.m_cardLoot, false);
-    }
-    printEndOfCardDetails(os);
-    return os;
 }
 

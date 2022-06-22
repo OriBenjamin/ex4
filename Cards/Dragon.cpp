@@ -8,15 +8,7 @@ Dragon::Dragon():
 BattleCard("Dragon", 1000, 25, INFINITY)
 {}
 
-/*
-ostream& operator<<(ostream& os, const BattleCard& battleCard)
-{
-    printCardDetails(os, battleCard.m_cardName);
-    printMonsterDetails(os, battleCard.m_cardForce, battleCard.m_cardDamage, battleCard.m_cardLoot, true);
-    printEndOfCardDetails(os);
-    return os;
-}
-*/
+
 
 void Dragon::cardEffect(Player& player)
 {
@@ -35,7 +27,14 @@ void Dragon::cardEffect(Player& player)
     }
     else
     {
-       (player.getPlayerHp()).setCurrentHealthPoints(0);
-        printLossBattle(player.getPlayerName(), this->m_cardName);
+        try
+        {
+            player.damage(player.getPlayerHp());
+            printLossBattle(player.getPlayerName(), this->m_cardName);
+        }
+        catch(InvalidArgument& exception)
+        {
+            throw InvalidArgument();
+        }
     }
 }

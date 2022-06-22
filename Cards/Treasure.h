@@ -4,15 +4,15 @@
 #include "Card.h"
 
  
-class Treasue : public Card
+class Treasure : public Card
 {
     
     public:
     
-    Treasue();
-    Treasue(const Treasue& treasue) = delete;
-    ~Treasue() = default;
-    Treasue& operator=(const Treasue& treasue) = delete;
+    Treasure();
+    Treasure(const Treasure& treasure) = delete;
+    ~Treasure() = default;
+    Treasure& operator=(const Treasure& treasure) = delete;
     void cardEffect(Player& player);
 
 };

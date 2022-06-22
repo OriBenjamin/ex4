@@ -70,10 +70,10 @@ HealthPoints operator-(const HealthPoints& healthPoints, const int healthPointsV
 
 
 HealthPoints& HealthPoints::operator+=(const int healthPointsValue) 
-{
-    if(this->m_currentHealthPoints <= 0)
+{                        
+    if(this->m_currentHealthPoints == 0)
     {
-        throw PlayerHasAlreadyDied();
+        return *this;
     }
     this->m_currentHealthPoints += healthPointsValue;
     if(this->m_currentHealthPoints < 0)
@@ -106,6 +106,10 @@ bool operator>(const HealthPoints& healthPoints1, const HealthPoints& healthPoin
 
 bool operator>(const HealthPoints& healthPoints1, const int healthPointsValue)
 {
+    if(healthPointsValue<=0)
+    {
+        return true;
+    }
     HealthPoints tempHealthPoints(healthPointsValue);
     HealthPoints& healthPoints2 = tempHealthPoints; 
     return operator>(healthPoints1, healthPoints2);
@@ -129,6 +133,14 @@ bool operator==(const HealthPoints& healthPoints1, const HealthPoints& healthPoi
 
 bool operator==(const HealthPoints& healthPoints, const int healthPointsValue)
 {
+    if(healthPointsValue==0)
+    {
+        return healthPoints.getCurrentHealthPoints() == 0;
+    }
+    if(healthPointsValue<0)
+    {
+        return false;
+    }
     if(!operator>(healthPoints, healthPointsValue) && !operator>(healthPointsValue, healthPoints))
     {
         return true;

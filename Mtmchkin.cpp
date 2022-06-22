@@ -1,58 +1,90 @@
-#include Mtmchkin.h
-#include Player.h
-#include Rogue.h
-#include Exception.h
-#include <iostream>
+#include "Mtmchkin.h"
 #include <fstream>
-#include <string>
-using namespace std;
-Mtmchkin::Mtmchkin(const std::string fileName):
+
+using std::string;
+using std::ifstream;
+using std::cin;
+
+Mtmchkin::Mtmchkin(const string fileName):
 m_teamSize(0),
-m_roundCount(0),
+m_roundsCount(0)
 {
-    ofstream cardsFile(fileName); //catch wrong fileName
-    if(!cardsFile)
+    ifstream cardsFile(fileName, std::ifstream::in);
+    if(!cardsFile.is_open())
     {
         throw DeckFileNotFound();
     }
-
-    std::string cardName;
-    int lineNumber = 1;
-    while(std::getline(cardsFile,cardName))
+    string cardName;
+    int lineNumber = 0;
+    bool gangIsValid = false;
+    std::vector<string> namesOfCards;
+    while(std::getline(cardsFile, cardName))
     {
-        try
+        lineNumber++;
+        if(cardName == "Gang")
         {
-        switch(cardName)
+            while(std::getline(cardsFile, cardName))
+            {
+                lineNumber++;
+                if(cardName == "Goblin" || cardName == "Vampire" || cardName == "Dragon")
+                {
+                    namesOfCards.push_back(cardName);
+                }
+                else if(cardName == "EndGang")
+                {
+                    gangIsValid = true;
+                    break;
+                }
+                else
+                {
+                    throw DeckFileFormatError(lineNumber);
+                }
+            }
+            if(!gangIsValid)
+            {
+                throw DeckFileFormatError(lineNumber + 1);
+            }
+            m_cards.push(new Gang(namesOfCards));
+            continue;
+        }
+        if(cardName == "Goblin")
         {
-            case Goblin:
-                m_cards.push(&Goblin(cardName));
-                break;
-            case Dragon:
-                m_cards.push(&Dragon(cardName));
-                break;
-            case Fairy:
-                m_cards.push(&Fairy(cardName));
-                break;
-            case Merchant:
-                m_cards.push(&Merchant(cardName));
-                break;
-            case PitFall:
-                m_cards.push(&PitFall(cardName));
-                break;
-            case Treasure:
-                m_cards.push(&Treasure(cardName));
-                break;
-            case Vampire:
-                m_cards.push(&Vampire(cardName));
-                break;
+            m_cards.push(new Goblin());
         }
+        else if(cardName == "Dragon")
+        {
+            m_cards.push(new Dragon());
         }
-        catch(InvalidCardName& exception)
+        else if(cardName == "Fairy")
+        {
+            m_cards.push(new Fairy());
+        }        
+        else if(cardName == "Merchant")
+        {
+            m_cards.push(new Merchant());
+        }   
+        else if(cardName == "Pitfall")
+        {
+            m_cards.push(new Pitfall());
+        }
+        else if(cardName == "Treasure")
+        {
+            m_cards.push(new Treasure());
+        }
+        else if(cardName == "Vampire")
+        {
+            m_cards.push(new Vampire());
+        }   
+        else if(cardName == "Barfight")
+        {
+            m_cards.push(new Barfight());
+        }
+        else
         {
             throw DeckFileFormatError(lineNumber);
         }
-        lineNumber++;
     }
+    cardsFile.close();
     if(lineNumber < 5)
     {
         throw DeckFileInvalidSize();
@@ -64,101 +96,107 @@ m_roundCount(0),
         cin >> m_teamSize;
         if(cin.fail() || m_teamSize < 2 || m_teamSize > 6)
         {
-            printInvalidTeamSize()
+            printInvalidTeamSize();
             cin.clear();
             continue;
         }
         break;
     } while (true);
-    string fullInput;
     string playerName;
     string playerKind;
-    int firstSpaceIndex = 0;
-    for(int i=0; i < teamSize; i++)
+    for(int i=0; i < m_teamSize; i++)
     {
+        printInsertPlayerMessage();
         do
         {
-            printInsertPlayerMessage();
-            cin >> fullInput; //split into two parts
-            if(fullInput.find(' ') == string::npos)
+            cin >> playerName;
+            cin >> playerKind;
+            if(!playerNameIsValid(playerName))
             {
                 printInvalidName();
                 continue;
             }
-            playerName = fullInput.substr(0,fullInput.find(' '));
-            playerKind = fullInput.substr(fullInput.find(' '),fullInput.length()-playerName.length());
-            switch(playerKind)
-                case Rogue:
-                    m_players.push(&Rogue(playerName));
-                    break;
-                case Wizard:
-                    m_cards.push(&Wizard(playerName));
-                    break;
-                case Fighter:
-                    m_cards.push(&Fighter(playerName));
-                    break;
-                case Merchant:
-                    m_cards.push(&Merchant(playerName));
-                    break;
-                default:
-                    printInvalidClass();
-                    continue; //continues loop
+            if(playerKind == "Rogue")
+            {
+                m_players.push(new Rogue(playerName));
+            }
+            else if(playerKind == "Wizard")
+            {
+                m_players.push(new Wizard(playerName));
+            }
+            else if(playerKind == "Fighter")
+            {
+                m_players.push(new Fighter(playerName));
+            }
+            else
+            {
+                printInvalidClass();
+                continue;
+            }    
             break;
         } while(true);
     }
 }
     
 
-Mtmchkin::playRound()
+void Mtmchkin::playRound()
 {
-    printRoundStartMessage(m_roundCount);
-    for(int i=0; i < m_teamSize)
+    m_roundsCount++;
+    printRoundStartMessage(m_roundsCount);
+    for(int i=0; i < m_teamSize; i++)
     {
-        printTurnStartMessage(m_players.front()->getName());
-        m_cards.front()->cardEffect(*(m_players.front());
+        printTurnStartMessage(m_players.front()->getPlayerName());
+        m_cards.front()->cardEffect(*(m_players.front()));
         if(m_players.front()->isKnockedOut())
         {
-            m_losers.push(m_players.front());
+            m_losers.push_back(m_players.front());
             m_players.front() = NULL; //prevent destruction of player
             m_players.pop();
-            m_teamSize--;
         }
-        else if(m_players.front()->hasWon())
+        else if(m_players.front()->playerHasWon())
         {
-            m_winners.push(m_players.front());
+            m_winners.push_back(m_players.front());
             m_players.front() = NULL;
             m_players.pop();
-            m_teamSize--;
         }
         else
         {
             m_players.push(m_players.front());
-            m_cards.front() = NULL;
+            m_players.front() = NULL;
             m_players.pop();
         }
         m_cards.push(m_cards.front());
         m_cards.front() = NULL; //prevent destruction of card
         m_cards.pop();
     }
-    m_roundCount++;
+    m_teamSize = m_players.size();
     if(isGameOver())
     {
         printGameEndMessage();
     }
 }
 
-Mtmchkin::printLeaderBoard() const
+void Mtmchkin::printLeaderBoard() const
 {
     printLeaderBoardStartMessage();
     int currentRank = 1;
-    for(int i = 0; i < m_winners.size(); i++) ////forwards interation
+    for(int i = 0; i < int(m_winners.size()); i++) ////forwards interation
     {
-        printPlayerLeaderBoard(currentRank,m_winners[i]);
+        printPlayerLeaderBoard(currentRank, *m_winners[i]);
         currentRank++;
     }
-    for(int i = m_losers.size() - 1; i >= 0; i--) //backwards interation
+       
+    std::queue<Player*> playersCopy = m_players;
+    while (!playersCopy.empty())
     {
-        printPlayerLeaderBoard(currentRank,m_losers[i]);
+        printPlayerLeaderBoard(currentRank, *playersCopy.front());
+        playersCopy.pop();
+        currentRank++;
+    }
+ 
+    for(int i = m_losers.size()-1; i >= 0; i--) //backwards interation
+    {
+        printPlayerLeaderBoard(currentRank, *m_losers[i]);
         currentRank++;
     }
 }
@@ -166,13 +204,13 @@ Mtmchkin::printLeaderBoard() const
 
 bool Mtmchkin::isGameOver() const
 {
-    return m_teamSize == 0;
+    return m_players.size() == 0;
 }
     
 
 int Mtmchkin::getNumberOfRounds() const
 {
-    return m_roundCount;
+    return m_roundsCount;
 }
 
 

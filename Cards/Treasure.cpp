@@ -3,11 +3,11 @@
 using std::string;
 
 const int TREASURE_OF_COINS = 10;
-Treasue::Treasue():
-Card("Treasue")
+Treasure::Treasure():
+Card("Treasure")
 {}
 
-void Treasue::cardEffect(Player& player)
+void Treasure::cardEffect(Player& player)
 {
     player.addCoins(TREASURE_OF_COINS);
     printTreasureMessage();

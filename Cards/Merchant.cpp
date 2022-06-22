@@ -20,16 +20,19 @@ Card("Merchant")
 
 void Merchant::cardEffect(Player& player)
 {
+    printMerchantInitialMessageForInteractiveEncounter(cout, player.getPlayerName(), player.getPlayerCoins());
     string userInput;
-    while(stoi(userInput) !=BUY_NOTHING || stoi(userInput) !=BUY_ONE_HEALTHPOINT || stoi(userInput) !=BUY_ONE_FORCE_UNIT)
+    getline(cin, userInput);   
+    while(stoi(userInput) != BUY_NOTHING && stoi(userInput) != BUY_ONE_HEALTHPOINT && stoi(userInput) != BUY_ONE_FORCE_UNIT)
     {
         printInvalidInput();
-        getline(cin,userInput);
+        getline(cin, userInput);
     }
     switch(stoi(userInput))
     {
         case BUY_NOTHING:
             printMerchantSummary(cout, player.getPlayerName(), BUY_NOTHING, 0);
+            break;
         case BUY_ONE_HEALTHPOINT:
             if(player.getPlayerCoins() < ONE_HEALTHPOINT_PRICE)
             {
@@ -38,9 +41,10 @@ void Merchant::cardEffect(Player& player)
             }
             else
             {
-                player.setPlayerCoins( player.getPlayerCoins() - ONE_HEALTHPOINT_PRICE );
+                player.pay(ONE_HEALTHPOINT_PRICE);
                 printMerchantSummary(cout, player.getPlayerName(), BUY_ONE_HEALTHPOINT, ONE_HEALTHPOINT_PRICE);
             }
+            break;
         case BUY_ONE_FORCE_UNIT:
             if(player.getPlayerCoins() < ONE_FORCE_UNIT_PRICE)
             {
@@ -49,59 +53,9 @@ void Merchant::cardEffect(Player& player)
             }
             else
             {
-                player.setPlayerCoins( player.getPlayerCoins() - ONE_FORCE_UNIT_PRICE );
+                player.pay(ONE_FORCE_UNIT_PRICE);
                 printMerchantSummary(cout, player.getPlayerName(), BUY_ONE_FORCE_UNIT, ONE_FORCE_UNIT_PRICE);
             }
+            break;
     }
 }
-
-/*void Merchant::cardEffect(const Player& player)
-{
-    string userInput;
-    printMerchantInitialMessageForInteractiveEncounter(player.m_playerName, player.m_playerCoins);
-    Merchant::tryToBuy(cin.getline(userInput));
-}
-
-void Merchant::invalidInput(string& userInput)
-{
-    while(stoi(userInput) !=BUY_NOTHING || stoi(userInput) !=BUY_ONE_HEALTHPOINT || stoi(userInput) !=BUY_ONE_FORCE_UNIT)
-    {
-        printInvalidInput();
-        cin.getline(userInput);
-    }
-}
-
-void Merchant::tryToBuy(string& userInput)
-{
-    Merchant::invalidInput(); //checking if the user input is invalid
-    if(stoi(userInput) == BUY_NOTHING)
-    {
-        printMerchantSummary(player.m_playerName, BUY_NOTHING, 0);
-    }
-    if(stoi(userInput) == BUY_ONE_HEALTHPOINT)
-    {
-        if(player.m_playerCoins < ONE_HEALTHPOINT_PRICE)
-        {
-            printMerchantInsufficientCoins();
-            Merchant::notEnughMoneyToBuy(cin.getline(userInput));
-        }
-        else
-        {
-            player.m_playerCoins -= ONE_HEALTHPOINT_PRICE;
-            printMerchantSummary(player.m_playerName, BUY_ONE_HEALTHPOINT, ONE_HEALTHPOINT_PRICE);
-        }
-    }
-    if(stoi(userInput) == BUY_ONE_FORCE_UNIT)
-    {
-        if(player.m_playerCoins < ONE_FORCE_UNIT_PRICE)
-        {
-            printMerchantInsufficientCoins();
-            Merchant::notEnughMoneyToBuy(cin.getline(userInput));
-        }
-        else
-        {
-            player.m_playerCoins -= ONE_FORCE_UNIT_PRICE;
-            printMerchantSummary(player.m_playerName, BUY_ONE_FORCE_UNIT, ONE_FORCE_UNIT_PRICE);
-        }
-    }
-}*/

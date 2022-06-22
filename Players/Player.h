@@ -4,9 +4,9 @@
 #include <iostream>
 #include "HealthPoints.h"
 #include "../Exception.h"
-//#include "../Cards/Card.cpp"
 
 const int Current_Amount_Of_Player_Types = 3;
+
 class Player 
 {
     public:
@@ -29,8 +29,8 @@ class Player
     const std::string getPlayerJob() const;
     const std::string getPlayerName() const;
     const int getPlayerCoins() const;
-    void setPlayerCoins(int coins);
-    HealthPoints& getPlayerHp();
+    int getPlayerHp() const;
+    bool playerHasWon();
 
 
     protected:

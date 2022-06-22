@@ -5,22 +5,26 @@
 #include <sstream>
 #include <functional>
 #include <exception>
+
 class DeckException : public std::runtime_error 
 {
     public:
-        DeckException(const std::string& what):
-        std::runtime_error(what)
-        {}
+    DeckException(const std::string& what):
+    std::runtime_error(what)
+    {}
 }; 
-class InvalidCardName{};
+class InvalidCardName
+{};
 class PlayerHasAlreadyWon{};
-class PlayerHasAlreadyDied{};
 class InvalidArgument{};
 class PlayerHasNotEnughCoins{};
 class InvalidPlayerName{};
 class InvalidPlayerClass{};
+class GangSizeNotValid{};
+
 class DeckFileFormatError : public DeckException
 {
+    private:
     const int m_lineNumber;
     public:
     DeckFileFormatError(int lineNumber):

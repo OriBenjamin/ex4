@@ -31,11 +31,7 @@ void Goblin::cardEffect(Player& player)
         {
             throw InvalidArgument();
         }
-        catch(PlayerHasAlreadyDied& exception)
-        {
-            throw PlayerHasAlreadyDied();
-        }
         printLossBattle(player.getPlayerName(), this->m_cardName);
-
     }
 }
+

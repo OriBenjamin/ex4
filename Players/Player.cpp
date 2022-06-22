@@ -18,7 +18,7 @@ or defaults values*/
 Player::Player(const string name, const string job):
 m_playerName(name),
 m_playerJob(job),
-m_playerHp(DEFAULT_MAX_HEALTH),
+m_playerHp(DEFAULT_MAX_HP),
 m_playerLevel(DEFAULT_LEVEL),
 m_playerCoins(DEFAULT_COINS),
 m_playerForce(DEFAULT_FORCE)
@@ -27,7 +27,7 @@ m_playerForce(DEFAULT_FORCE)
     {
         throw InvalidPlayerName();
     }
-    if(playerClassIsValid(job))
+    if(!playerClassIsValid(job))
     {
         throw InvalidPlayerClass();
     }
@@ -48,19 +48,25 @@ const int Player::getPlayerCoins() const
     return m_playerCoins;
 }
 
-void Player::setPlayerCoins(int coins)
+
+int Player::getPlayerHp() const
 {
-    m_playerCoins = coins;
+    return m_playerHp.getCurrentHealthPoints();
 }
 
-HealthPoints& Player::getPlayerHp()
+bool Player::playerHasWon()
 {
-    return m_playerHp;
+    if(m_playerLevel == 10)
+    {
+        return true;
+    }
+    return false;
 }
+
 
 std::ostream& operator<<(std::ostream& os, const Player& player)
 {
-    printPlayerDetails(os,player.m_playerName,player.m_playerJob,player.m_playerLevel, player.m_playerForce,player.m_playerHp.getCurrentHealthPoints(),player.m_playerCoins);
+    printPlayerDetails(os, player.m_playerName, player.m_playerJob, player.m_playerLevel, player.m_playerForce, player.m_playerHp.getCurrentHealthPoints(), player.m_playerCoins);
     return os;
 }
 
@@ -96,7 +102,6 @@ void Player::heal(const int healAmount)
     if(healAmount <= 0)
     {
         throw InvalidArgument();
-        
     }
     else
     {
@@ -113,14 +118,7 @@ void Player::damage(const int damageAmount)
     }
     else
     {
-        try
-        {
-            this->m_playerHp -= damageAmount;
-        }
-        catch(PlayerHasAlreadyDied& exception)
-        {
-            throw PlayerHasAlreadyDied();
-        }
+        this->m_playerHp -= damageAmount;
     }
 }
 
@@ -174,7 +172,7 @@ bool playerNameIsValid(const string stringName)
 {
     const char* name = stringName.c_str();
     int nameLength = 0;
-    while(name != nullptr)
+    while(*name != '\0')
     {
         nameLength++;
         //check the character's validity according to thier assci values
@@ -189,9 +187,9 @@ bool playerNameIsValid(const string stringName)
 
 bool playerClassIsValid(const string name, const string playerJobTypes[], const int currentAmountOfPlayerTypes)
 {
-    for(int i = 0; i < Current_Amount_Of_Player_Types; i++)
+    for(int i = 0; i < currentAmountOfPlayerTypes; i++)
     {
-        if(!name.compare(playerJobTypes[i]))
+        if(name.compare(playerJobTypes[i])==0)
         {
             return true;
         }
@@ -199,7 +197,3 @@ bool playerClassIsValid(const string name, const string playerJobTypes[], const 
     return false;
 }
 
-int main()
-{
-    return 0;
-}

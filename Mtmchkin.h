@@ -1,7 +1,9 @@
 #ifndef MTMCHKIN_H_
 #define MTMCHKIN_H_
+
 #include "Players/Player.h"
 #include "Cards/Card.h"
+#include "Cards/Gang.h"
 #include "Cards/Vampire.h"
 #include "Cards/Barfight.h"
 #include "Cards/Dragon.h"
@@ -14,11 +16,16 @@
 #include "Players/Wizard.h"
 #include "Players/Fighter.h"
 #include "Exception.h"
-#include "Utilities.h"
+#include "utilities.h"
 #include <iostream>
-class Mtmchkin{
+#include <queue>
+#include <vector>
 
-public:
+
+class Mtmchkin
+{
+
+    public:
     
     /*
     * C'tor of Mtmchkin class
@@ -62,13 +69,13 @@ public:
     */
     int getNumberOfRounds() const;
 
-private:
-    std::queue<Card> m_cards;
-    std::queue<Player> m_players;
-    std::vector<Player> m_winners;
-    std::vector<Player> m_losers;
+    private:
+    std::queue<Card*> m_cards;
+    std::queue<Player*> m_players;
+    std::vector<Player*> m_winners;
+    std::vector<Player*> m_losers;
     int m_teamSize;
-    int m_roundCount;
+    int m_roundsCount;
 };
 
 

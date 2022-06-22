@@ -15,8 +15,6 @@ class Merchant : public Card
     ~Merchant() = default;
     Merchant& operator=(const Merchant& merchant) = delete;
     void cardEffect(Player& player);
-    //void invalidInput(string& userInput);
-    //void tryToBuy(string& userInput);
 
 };
 
