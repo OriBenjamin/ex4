@@ -68,7 +68,7 @@ class Mtmchkin
     *          int - number of rounds played
     */
     int getNumberOfRounds() const;
-
+    ~Mtmchkin();
     private:
     std::queue<Card*> m_cards;
     std::queue<Player*> m_players;
@@ -76,8 +76,12 @@ class Mtmchkin
     std::vector<Player*> m_losers;
     int m_teamSize;
     int m_roundsCount;
+
+    void recieveCards(std::ifstream& cardsFile);
+    void recievePlayers();
+
 };
-
-
+//a function that pushes the right cards to the deck, returning true if worked.
+bool pushCards(std::queue<Card*>& cards, const std::string cardName);
 
 #endif /* MTMCHKIN_H_ */

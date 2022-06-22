@@ -14,6 +14,28 @@ m_roundsCount(0)
     {
         throw DeckFileNotFound();
     }
+    this->recieveCards(cardsFile);
+    cardsFile.close();
+
+    printStartGameMessage();
+    printEnterTeamSizeMessage();
+    do
+    {
+        cin >> m_teamSize;
+        if(cin.fail() || m_teamSize < 2 || m_teamSize > 6)
+        {
+            printInvalidTeamSize();
+            cin.clear();
+            continue;
+        }
+        break;
+    } while (true);
+    
+    this->recievePlayers();
+}
+
+void Mtmchkin::recieveCards(ifstream& cardsFile)
+{    
     string cardName;
     int lineNumber = 0;
     bool gangIsValid = false;
@@ -45,63 +67,22 @@ m_roundsCount(0)
                 throw DeckFileFormatError(lineNumber + 1);
             }
             m_cards.push(new Gang(namesOfCards));
-            continue;
         }
-        if(cardName == "Goblin")
+        else if(!pushCards(m_cards, cardName))
         {
-            m_cards.push(new Goblin());
-        }
-        else if(cardName == "Dragon")
-        {
-            m_cards.push(new Dragon());
-        }
-        else if(cardName == "Fairy")
-        {
-            m_cards.push(new Fairy());
-        }        
-        else if(cardName == "Merchant")
-        {
-            m_cards.push(new Merchant());
-        }   
-        else if(cardName == "Pitfall")
-        {
-            m_cards.push(new Pitfall());
-        }
-        else if(cardName == "Treasure")
-        {
-            m_cards.push(new Treasure());
-        }
-        else if(cardName == "Vampire")
-        {
-            m_cards.push(new Vampire());
-        }   
-        else if(cardName == "Barfight")
-        {
-            m_cards.push(new Barfight());
-        }
-        else
-        {
+            this->~Mtmchkin();
             throw DeckFileFormatError(lineNumber);
         }
+        
     }
-    cardsFile.close();
     if(lineNumber < 5)
     {
         throw DeckFileInvalidSize();
     }
-    printStartGameMessage();
-    printEnterTeamSizeMessage();
-    do
-    {
-        cin >> m_teamSize;
-        if(cin.fail() || m_teamSize < 2 || m_teamSize > 6)
-        {
-            printInvalidTeamSize();
-            cin.clear();
-            continue;
-        }
-        break;
-    } while (true);
+}
+
+void Mtmchkin::recievePlayers()
+{
     string playerName;
     string playerKind;
     for(int i=0; i < m_teamSize; i++)
@@ -137,7 +118,47 @@ m_roundsCount(0)
         } while(true);
     }
 }
-    
+
+bool pushCards(std::queue<Card*>& cards, const string cardName)
+{
+        if(cardName == "Goblin")
+        {
+            cards.push(new Goblin());
+        }
+        else if(cardName == "Dragon")
+        {
+            cards.push(new Dragon());
+        }
+        else if(cardName == "Fairy")
+        {
+            cards.push(new Fairy());
+        }        
+        else if(cardName == "Merchant")
+        {
+            cards.push(new Merchant());
+        }   
+        else if(cardName == "Pitfall")
+        {
+            cards.push(new Pitfall());
+        }
+        else if(cardName == "Treasure")
+        {
+            cards.push(new Treasure());
+        }
+        else if(cardName == "Vampire")
+        {
+            cards.push(new Vampire());
+        }   
+        else if(cardName == "Barfight")
+        {
+            cards.push(new Barfight());
+        }
+        else
+        {
+            return false;
+        }
+    return true;
+}
 
 void Mtmchkin::playRound()
 {
@@ -185,7 +206,7 @@ void Mtmchkin::printLeaderBoard() const
         printPlayerLeaderBoard(currentRank, *m_winners[i]);
         currentRank++;
     }
-       
+
     std::queue<Player*> playersCopy = m_players;
     while (!playersCopy.empty())
     {
@@ -215,3 +236,29 @@ int Mtmchkin::getNumberOfRounds() const
 
 
 
+Mtmchkin::~Mtmchkin()
+{
+    while(!m_winners.empty())
+    {
+        delete m_winners.back();
+        m_winners.pop_back();
+    }
+    
+    while(!m_losers.empty())
+    {
+        delete m_losers.back();
+        m_losers.pop_back();
+    }
+
+    while(!m_cards.empty())
+    {
+        delete m_cards.front();
+        m_cards.pop();
+    }
+
+    while(!m_players.empty())
+    {
+        delete m_players.front();
+        m_players.pop();
+    }
+}

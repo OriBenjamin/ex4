@@ -20,7 +20,7 @@ class Gang : public Card
     
     Gang(const std::vector<std::string> namesOfCards);
     Gang(const Gang& gang) = delete;
-    ~Gang() = default;
+    ~Gang();
     Gang& operator=(const Gang& gang) = delete;
     void cardEffect(Player& player);
     void printCardData(std::ostream& os) const override;

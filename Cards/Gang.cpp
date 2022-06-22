@@ -85,3 +85,11 @@ void Gang::printCardData(std::ostream& os) const
 }
 
     
+Gang::~Gang()
+{
+    while(!m_battleCardsGang.empty())
+    {
+        delete m_battleCardsGang.back();
+        m_battleCardsGang.pop_back();
+    }
+}
